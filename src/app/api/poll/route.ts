@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { castVote, getPollState, resetPoll } from "@/lib/poll-store";
+import { castVote, getPollState } from "@/lib/poll-store";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return NextResponse.json(getPollState());
+  return NextResponse.json(await getPollState());
 }
 
 export async function POST(request: Request) {
@@ -18,12 +18,8 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json(castVote(body.optionId));
+    return NextResponse.json(await castVote(body.optionId));
   } catch {
     return NextResponse.json({ error: "Invalid vote" }, { status: 400 });
   }
-}
-
-export async function DELETE() {
-  return NextResponse.json(resetPoll());
 }

@@ -13,7 +13,6 @@ export function PollPanel() {
   const [votedGeneration, setVotedGeneration] = useState<number | null>(null);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const hasVoted =
@@ -119,37 +118,6 @@ export function PollPanel() {
     }
   }
 
-  async function handleReset() {
-    if (isResetting) {
-      return;
-    }
-
-    setIsResetting(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/poll", { method: "DELETE" });
-
-      if (!response.ok) {
-        throw new Error("Reset failed");
-      }
-
-      const data = (await response.json()) as {
-        counts: VoteCounts;
-        generation: number;
-      };
-      applyPollState(data);
-      setVotedGeneration(null);
-      setSelectedOption(null);
-      window.sessionStorage.removeItem(VOTED_GENERATION_KEY);
-      window.sessionStorage.removeItem(`${VOTED_GENERATION_KEY}:option`);
-    } catch {
-      setError("Could not reset the poll. Please try again.");
-    } finally {
-      setIsResetting(false);
-    }
-  }
-
   const totalVotes = Object.values(counts).reduce(
     (sum, count) => sum + (count ?? 0),
     0,
@@ -214,17 +182,7 @@ export function PollPanel() {
               Round {generation} · updates every 3 seconds
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-ko-muted">{totalVotes} votes</p>
-            <button
-              type="button"
-              onClick={handleReset}
-              disabled={isResetting}
-              className="rounded-lg border border-ko-border bg-white px-3 py-1.5 text-sm font-semibold text-ko-dark transition-colors hover:border-ko-accent hover:text-ko-accent disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isResetting ? "Resetting…" : "Reset poll"}
-            </button>
-          </div>
+          <p className="text-sm text-ko-muted">{totalVotes} votes</p>
         </div>
 
         <div className="mt-6 space-y-4">
