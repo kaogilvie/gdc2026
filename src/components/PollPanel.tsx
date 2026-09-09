@@ -153,6 +153,11 @@ export function PollPanel() {
                 } disabled:cursor-not-allowed disabled:opacity-70`}
               >
                 <span className="text-lg font-semibold">{option.label}</span>
+                {option.subtitle ? (
+                  <span className="mt-1 block text-sm text-ko-muted">
+                    {option.subtitle}
+                  </span>
+                ) : null}
                 {isSelected ? (
                   <span className="mt-1 block text-xs text-ko-accent">
                     Your vote
@@ -193,9 +198,16 @@ export function PollPanel() {
 
             return (
               <div key={option.id}>
-                <div className="mb-1 flex items-center justify-between text-sm text-ko-dark">
-                  <span>{option.label}</span>
+                <div className="mb-1 flex items-start justify-between gap-3 text-sm text-ko-dark">
                   <span>
+                    <span className="font-medium">{option.label}</span>
+                    {option.subtitle ? (
+                      <span className="mt-0.5 block text-xs text-ko-muted">
+                        {option.subtitle}
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className="shrink-0">
                     {count} ({percentage}%)
                   </span>
                 </div>

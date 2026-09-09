@@ -1,38 +1,31 @@
-export type PollOption = {
-  id: string;
-  label: string;
-};
-
 export type Slide = {
   title: string;
   bullets?: string[];
   body?: string;
 };
 
+export type Topic = {
+  id: string;
+  label: string;
+  subtitle?: string;
+  slides: Slide[];
+};
+
+export type PollOption = Pick<Topic, "id" | "label" | "subtitle">;
+
 export type Presentation = {
   slug: string;
   jeopardyLabel: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   slides: Slide[];
 };
 
-export const pollConfig = {
-  question: "Which topic should we dive into?",
-  options: [
-    { id: "topic-a", label: "Topic A" },
-    { id: "topic-b", label: "Topic B" },
-    { id: "topic-c", label: "Topic C" },
-    { id: "topic-d", label: "Topic D" },
-  ] satisfies PollOption[],
-};
-
-export const presentations: Presentation[] = [
+export const topics: Topic[] = [
   {
-    slug: "topic-a",
-    jeopardyLabel: "Topic A",
-    title: "Topic A",
-    subtitle: "First presentation deck",
+    id: "topic-a",
+    label: "Data Retrieval",
+    subtitle: "MCPs, Databases & GivingData",
     slides: [
       {
         title: "Topic A",
@@ -53,10 +46,9 @@ export const presentations: Presentation[] = [
     ],
   },
   {
-    slug: "topic-b",
-    jeopardyLabel: "Topic B",
-    title: "Topic B",
-    subtitle: "Second presentation deck",
+    id: "topic-b",
+    label: "AI & Real-world Data",
+    subtitle: "RAG, Training & Context",
     slides: [
       {
         title: "Topic B",
@@ -77,10 +69,9 @@ export const presentations: Presentation[] = [
     ],
   },
   {
-    slug: "topic-c",
-    jeopardyLabel: "Topic C",
-    title: "Topic C",
-    subtitle: "Third presentation deck",
+    id: "topic-c",
+    label: "All You Need is Attention",
+    subtitle: "How AI Works & Emergent Behavior",
     slides: [
       {
         title: "Topic C",
@@ -101,10 +92,9 @@ export const presentations: Presentation[] = [
     ],
   },
   {
-    slug: "topic-d",
-    jeopardyLabel: "Topic D",
-    title: "Topic D",
-    subtitle: "Fourth presentation deck",
+    id: "topic-d",
+    label: "Open Q&A",
+    subtitle: "Ask us anything",
     slides: [
       {
         title: "Topic D",
@@ -125,6 +115,23 @@ export const presentations: Presentation[] = [
     ],
   },
 ];
+
+export const pollConfig = {
+  question: "Which topic should we dive into?",
+  options: topics.map(({ id, label, subtitle }) => ({
+    id,
+    label,
+    subtitle,
+  })) satisfies PollOption[],
+};
+
+export const presentations: Presentation[] = topics.map((topic) => ({
+  slug: topic.id,
+  jeopardyLabel: topic.label,
+  title: topic.label,
+  subtitle: topic.subtitle,
+  slides: topic.slides,
+}));
 
 export function getPresentation(slug: string): Presentation | undefined {
   return presentations.find((presentation) => presentation.slug === slug);

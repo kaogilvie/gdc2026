@@ -26,12 +26,14 @@ export function JeopardyBoard() {
             <span className="absolute left-4 top-4 rounded-full bg-ko-light px-3 py-1 text-xs font-bold uppercase tracking-wider text-ko-dark">
               ${(index + 1) * 200}
             </span>
-            <span className="block text-2xl font-black uppercase tracking-wide text-ko-accent transition-colors group-hover:text-ko-accent-hover sm:text-3xl">
+            <span className="block text-xl font-black tracking-wide text-ko-accent transition-colors group-hover:text-ko-accent-hover sm:text-2xl">
               {presentation.jeopardyLabel}
             </span>
-            <span className="mt-3 block text-sm text-ko-muted">
-              {presentation.subtitle}
-            </span>
+            {presentation.subtitle ? (
+              <span className="mt-3 block text-sm text-ko-muted">
+                {presentation.subtitle}
+              </span>
+            ) : null}
           </Link>
         ))}
       </div>
