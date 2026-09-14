@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SiteUrlToggle } from "@/components/SiteUrlToggle";
 
 const sections = [
   { href: "/", label: "Poll", description: "Anonymous audience vote" },
@@ -26,6 +27,7 @@ export function Nav() {
         </div>
 
         <nav className="flex flex-wrap gap-2">
+          <SiteUrlToggle />
           {sections.map((section) => {
             const isActive =
               section.href === "/"
