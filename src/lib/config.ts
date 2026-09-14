@@ -130,21 +130,9 @@ export const topics: Topic[] = [
     subtitle: "Ask us anything",
     slides: [
       {
-        title: "Topic D",
-        body: "Replace this slide content with your own material.",
-      },
-      {
-        title: "Key Points",
-        bullets: [
-          "Add your first talking point here",
-          "Add your second talking point here",
-          "Add your third talking point here",
-        ],
-      },
-      {
-        title: "Summary",
-        body: "Wrap up Topic D with a closing thought.",
-      },
+        title: "Open Q&A",
+        body: "Ask us anything.",
+      }
     ],
   },
 ];
