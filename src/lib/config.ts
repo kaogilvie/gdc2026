@@ -24,8 +24,8 @@ export type Presentation = {
 export const topics: Topic[] = [
   {
     id: "topic-a",
-    label: "Data Retrieval",
-    subtitle: "MCPs, Databases & GivingData",
+    label: "Storing & Retrieving Data",
+    subtitle: "A survey of technologies - MCPs, Databases & GivingData",
     slides: [
       {
         title: "Topic A",
@@ -48,7 +48,7 @@ export const topics: Topic[] = [
   {
     id: "topic-b",
     label: "AI & Real-world Data",
-    subtitle: "RAG, Training & Context",
+    subtitle: "How does AI get the information it needs to answer questions?",
     slides: [
       {
         title: "Topic B",
@@ -70,8 +70,8 @@ export const topics: Topic[] = [
   },
   {
     id: "topic-c",
-    label: "All You Need is Attention",
-    subtitle: "How AI Works & Emergent Behavior",
+    label: "AI Mechanics",
+    subtitle: "How AI works & how to think about the hype",
     slides: [
       {
         title: "Topic C",
