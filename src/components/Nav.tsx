@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation";
 import { SiteUrlToggle } from "@/components/SiteUrlToggle";
 
 const sections = [
-  { href: "/", label: "Poll", description: "Anonymous audience vote" },
+  { href: "/", label: "Poll", description: "" },
   {
     href: "/presentations",
-    label: "Presentations",
-    description: "Jeopardy-style decks",
+    label: "Topics",
+    description: "",
   },
 ];
 

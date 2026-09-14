@@ -2,7 +2,23 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import type { Presentation } from "@/lib/config";
+import { SoftwareDatabaseMcpExplainer } from "@/components/SoftwareDatabaseMcpExplainer";
+import { TrainingRagContextActivity } from "@/components/TrainingRagContextActivity";
+import { TrainingRagContextExplainer } from "@/components/TrainingRagContextExplainer";
+import type { Presentation, SlideComponent } from "@/lib/config";
+
+type SlideComponentProps = {
+  large?: boolean;
+};
+
+const slideComponents: Record<
+  SlideComponent,
+  React.ComponentType<SlideComponentProps>
+> = {
+  "software-database-mcp": SoftwareDatabaseMcpExplainer,
+  "training-rag-context": TrainingRagContextExplainer,
+  "training-rag-context-activity": TrainingRagContextActivity,
+};
 
 type SlideDeckProps = {
   presentation: Presentation;
@@ -11,6 +27,10 @@ type SlideDeckProps = {
 export function SlideDeck({ presentation }: SlideDeckProps) {
   const [index, setIndex] = useState(0);
   const slide = presentation.slides[index];
+  const SlideContent = slide.component
+    ? slideComponents[slide.component]
+    : null;
+  const large = presentation.largeText ?? false;
   const isFirst = index === 0;
   const isLast = index === presentation.slides.length - 1;
 
@@ -68,14 +88,26 @@ export function SlideDeck({ presentation }: SlideDeckProps) {
               {slide.title}
             </h2>
 
-            {slide.body ? (
-              <p className="mt-8 max-w-3xl text-xl leading-relaxed text-ko-dark/80">
+            {SlideContent ? <SlideContent large={large} /> : null}
+
+            {!SlideContent && slide.body ? (
+              <p
+                className={`mt-8 leading-relaxed text-ko-dark/80 ${
+                  large
+                    ? "max-w-4xl text-3xl sm:text-4xl"
+                    : "max-w-3xl text-xl"
+                }`}
+              >
                 {slide.body}
               </p>
             ) : null}
 
-            {slide.bullets ? (
-              <ul className="mt-8 space-y-4 text-xl text-ko-dark/80">
+            {!SlideContent && slide.bullets ? (
+              <ul
+                className={`mt-8 space-y-4 text-ko-dark/80 ${
+                  large ? "text-2xl sm:text-3xl" : "text-xl"
+                }`}
+              >
                 {slide.bullets.map((bullet) => (
                   <li key={bullet} className="flex gap-3">
                     <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-ko-accent" />

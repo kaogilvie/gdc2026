@@ -28,7 +28,7 @@ export function SiteUrlToggle() {
         className="rounded-lg bg-ko-light-muted px-4 py-2 text-left transition-colors hover:bg-ko-light"
       >
         <span className="block text-sm font-semibold text-ko-dark">Site URL</span>
-        <span className="block text-xs text-ko-muted">Show on screen</span>
+        <span className="block text-xs text-ko-muted"></span>
       </button>
 
       {showUrl ? (
