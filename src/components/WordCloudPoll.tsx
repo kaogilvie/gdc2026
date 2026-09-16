@@ -94,6 +94,12 @@ export function WordCloudPoll({ pollId }: WordCloudPollProps) {
       return;
     }
 
+    setCounts({});
+    setGeneration(1);
+    setVotedGeneration(null);
+    setSelectedOption(null);
+    setError(null);
+
     const storageKey = votedGenerationKey(pollId);
     const storedGeneration = window.sessionStorage.getItem(storageKey);
     const storedOption = window.sessionStorage.getItem(`${storageKey}:option`);

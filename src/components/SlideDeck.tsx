@@ -178,7 +178,11 @@ export function SlideDeck({ presentation }: SlideDeckProps) {
             ) : null}
 
             {SlideContent ? (
-              <SlideContent large={large} pollId={slide.wordCloudPollId} />
+              <SlideContent
+                key={`${slide.component ?? "slide"}-${slide.wordCloudPollId ?? index}`}
+                large={large}
+                pollId={slide.wordCloudPollId}
+              />
             ) : null}
 
             {!SlideContent &&
