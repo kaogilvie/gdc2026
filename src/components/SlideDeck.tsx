@@ -1,14 +1,22 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { SoftwareDatabaseMcpExplainer } from "@/components/SoftwareDatabaseMcpExplainer";
 import { TrainingRagContextActivity } from "@/components/TrainingRagContextActivity";
 import { TrainingRagContextExplainer } from "@/components/TrainingRagContextExplainer";
-import type { Presentation, SlideComponent } from "@/lib/config";
+import { WordCloudPoll } from "@/components/WordCloudPoll";
+import type {
+  NumberedBullet,
+  Presentation,
+  SlideComponent,
+  SlideReference,
+} from "@/lib/config";
 
 type SlideComponentProps = {
   large?: boolean;
+  pollId?: string;
 };
 
 const slideComponents: Record<
@@ -18,11 +26,89 @@ const slideComponents: Record<
   "software-database-mcp": SoftwareDatabaseMcpExplainer,
   "training-rag-context": TrainingRagContextExplainer,
   "training-rag-context-activity": TrainingRagContextActivity,
+  "word-cloud-poll": WordCloudPoll,
 };
 
 type SlideDeckProps = {
   presentation: Presentation;
 };
+
+type SlideBulletListProps = {
+  bullets?: string[];
+  numberedBullets?: NumberedBullet[];
+  large: boolean;
+  className?: string;
+};
+
+function SlideBulletList({
+  bullets,
+  numberedBullets,
+  large,
+  className = "",
+}: SlideBulletListProps) {
+  if (!bullets?.length && !numberedBullets?.length) {
+    return null;
+  }
+
+  return (
+    <ul
+      className={`space-y-4 text-ko-dark/80 ${
+        large ? "text-2xl sm:text-3xl" : "text-xl"
+      } ${className}`}
+    >
+      {numberedBullets?.map((bullet) => (
+        <li key={bullet.text} className="flex gap-3">
+          <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-ko-accent" />
+          <span>
+            {bullet.text}
+            {bullet.refs?.map((ref) => (
+              <sup
+                key={ref}
+                className="ml-0.5 text-sm font-semibold text-ko-accent"
+              >
+                {ref}
+              </sup>
+            ))}
+          </span>
+        </li>
+      ))}
+      {bullets?.map((bullet) => (
+        <li key={bullet} className="flex gap-3">
+          <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-ko-accent" />
+          <span>{bullet}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function SlideReferenceList({ references }: { references?: SlideReference[] }) {
+  if (!references?.length) {
+    return null;
+  }
+
+  return (
+    <ol className="space-y-2 border-t border-ko-border pt-6 text-base text-ko-muted">
+      {[...references]
+        .sort((a, b) => a.id - b.id)
+        .map((reference) => (
+          <li key={reference.id}>
+            <sup className="mr-1 font-semibold text-ko-accent">
+              {reference.id}
+            </sup>
+            <Link
+              href={reference.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-ko-dark underline decoration-ko-accent/40 underline-offset-4 transition-colors hover:text-ko-accent"
+            >
+              {reference.text}
+            </Link>
+          </li>
+        ))}
+    </ol>
+  );
+}
 
 export function SlideDeck({ presentation }: SlideDeckProps) {
   const [index, setIndex] = useState(0);
@@ -31,6 +117,7 @@ export function SlideDeck({ presentation }: SlideDeckProps) {
     ? slideComponents[slide.component]
     : null;
   const large = presentation.largeText ?? false;
+  const bodyLarge = slide.largeBody ?? large;
   const isFirst = index === 0;
   const isLast = index === presentation.slides.length - 1;
 
@@ -84,37 +171,109 @@ export function SlideDeck({ presentation }: SlideDeckProps) {
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-ko-muted">
               Slide {index + 1} of {presentation.slides.length}
             </p>
-            <h2 className="mt-4 text-4xl font-bold text-ko-dark sm:text-5xl">
-              {slide.title}
-            </h2>
-
-            {SlideContent ? <SlideContent large={large} /> : null}
-
-            {!SlideContent && slide.body ? (
-              <p
-                className={`mt-8 leading-relaxed text-ko-dark/80 ${
-                  large
-                    ? "max-w-4xl text-3xl sm:text-4xl"
-                    : "max-w-3xl text-xl"
-                }`}
-              >
-                {slide.body}
-              </p>
+            {slide.title ? (
+              <h2 className="mt-4 text-4xl font-bold text-ko-dark sm:text-5xl">
+                {slide.title}
+              </h2>
             ) : null}
 
-            {!SlideContent && slide.bullets ? (
-              <ul
-                className={`mt-8 space-y-4 text-ko-dark/80 ${
-                  large ? "text-2xl sm:text-3xl" : "text-xl"
-                }`}
-              >
-                {slide.bullets.map((bullet) => (
-                  <li key={bullet} className="flex gap-3">
-                    <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-ko-accent" />
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
+            {SlideContent ? (
+              <SlideContent large={large} pollId={slide.wordCloudPollId} />
+            ) : null}
+
+            {!SlideContent &&
+            (slide.body ||
+              slide.bullets ||
+              slide.numberedBullets ||
+              slide.references ||
+              slide.image ||
+              slide.link) ? (
+              <div className="mt-8 space-y-8">
+                {slide.image && slide.imageFullWidth ? (
+                  <div className="relative aspect-[16/10] w-full">
+                    <Image
+                      src={slide.image}
+                      alt={slide.imageAlt ?? ""}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 1024px) 100vw, 896px"
+                    />
+                  </div>
+                ) : null}
+
+                {slide.image && !slide.imageFullWidth ? (
+                  <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
+                    <div className="relative mx-auto aspect-square w-48 shrink-0 sm:mx-0 sm:w-56 lg:w-64">
+                      <Image
+                        src={slide.image}
+                        alt={slide.imageAlt ?? ""}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 640px) 192px, 256px"
+                      />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      {slide.body ? (
+                        <p
+                          className={`whitespace-pre-line leading-relaxed text-ko-dark/80 ${
+                            bodyLarge
+                              ? "max-w-5xl text-4xl sm:text-5xl lg:text-6xl"
+                              : "max-w-none text-xl"
+                          }`}
+                        >
+                          {slide.body}
+                        </p>
+                      ) : null}
+
+                      <SlideBulletList
+                        bullets={slide.bullets}
+                        numberedBullets={slide.numberedBullets}
+                        large={large}
+                        className={slide.body ? "mt-8" : ""}
+                      />
+                    </div>
+                  </div>
+                ) : null}
+
+                {!slide.image || slide.imageFullWidth ? (
+                  <>
+                    {slide.body ? (
+                      <p
+                        className={`whitespace-pre-line leading-relaxed text-ko-dark/80 ${
+                          bodyLarge
+                            ? "max-w-5xl text-4xl sm:text-5xl lg:text-6xl"
+                            : "max-w-3xl text-xl"
+                        }`}
+                      >
+                        {slide.body}
+                      </p>
+                    ) : null}
+
+                    <SlideBulletList
+                      bullets={slide.bullets}
+                      numberedBullets={slide.numberedBullets}
+                      large={large}
+                      className={slide.body ? "mt-8" : ""}
+                    />
+                  </>
+                ) : null}
+
+                <SlideReferenceList references={slide.references} />
+
+                {slide.link ? (
+                  <p className="text-lg">
+                    <Link
+                      href={slide.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-ko-accent underline decoration-ko-accent/40 underline-offset-4 transition-colors hover:text-ko-accent-hover"
+                    >
+                      {slide.link.text}
+                    </Link>
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
         </div>

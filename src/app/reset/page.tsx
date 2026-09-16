@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { resetPoll } from "@/lib/poll-store";
+import { resetAllWordCloudPolls } from "@/lib/word-cloud-poll-store";
 
 export const dynamic = "force-dynamic";
 
 export default async function ResetPage() {
-  const { generation } = await resetPoll();
+  const [{ generation }, wordCloudPolls] = await Promise.all([
+    resetPoll(),
+    resetAllWordCloudPolls(),
+  ]);
+  const wordCloudCount = Object.keys(wordCloudPolls).length;
 
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-10">
@@ -16,7 +21,8 @@ export default async function ResetPage() {
           Round {generation} is ready
         </h1>
         <p className="mt-3 text-sm text-ko-muted">
-          Vote counts cleared. The audience can vote again.
+          Topic poll and {wordCloudCount} word cloud
+          {wordCloudCount === 1 ? "" : "s"} reset. The audience can vote again.
         </p>
         <Link
           href="/"
