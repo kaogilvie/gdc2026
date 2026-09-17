@@ -281,6 +281,13 @@ export function getWordCloudPollConfig(
   return wordCloudPollConfigs[pollId];
 }
 
+export const purposeConfig = {
+  title: "Purpose",
+  bullets: ["Leave here with a better understanding of AI and the ecosystem of technology around it",
+    "Leave here with at least some AI questions answered",
+    "Have a little bit of experiential learning (and potentially fun, we'll see)"],
+};
+
 export const pollConfig = {
   question: "Which topic should we dive into?",
   options: topics.map(({ id, label, subtitle }) => ({

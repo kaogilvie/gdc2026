@@ -7,6 +7,11 @@ import { SiteUrlToggle } from "@/components/SiteUrlToggle";
 const sections = [
   { href: "/", label: "Poll", description: "" },
   {
+    href: "/purpose",
+    label: "Purpose",
+    description: "",
+  },
+  {
     href: "/presentations",
     label: "Topics",
     description: "",
